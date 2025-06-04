@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { SavingsTaxService } from './SavingsTaxService';
 import { BrbTracker } from '../models/BrbTracker';
 import { TaxConstants } from '../constants/taxConstants';
@@ -21,20 +20,19 @@ describe('SavingsTaxService', () => {
     );
 
     // Assert
-    // Should have starting rate band of £5,000 at 0%
+    // Should have starting rate band of Â£5,000 at 0%
     const startingRateBand = result.find(b => b.band === TaxConstants.StartingBand);
     expect(startingRateBand).toBeDefined();
     expect(startingRateBand?.amount).toBe(TaxConstants.StartingRateForSavingsThreshold);
     expect(startingRateBand?.rate).toBe(TaxConstants.StartingRateForSavings);
     expect(startingRateBand?.tax).toBe(0);
 
-    // Should have savings allowance of £1,000 at 0% (in Basic band)
     const allowanceBand = result.find(b => b.band === TaxConstants.BasicBand && b.rate === 0);
     expect(allowanceBand).toBeDefined();
     expect(allowanceBand?.amount).toBe(TaxConstants.SavingsAllowanceBasic);
     expect(allowanceBand?.tax).toBe(0);
 
-    // Remaining £4,000 should be taxed at basic rate
+    // Remaining Â£4,000 should be taxed at basic rate
     const basicRateBand = result.find(b => b.band === TaxConstants.BasicBand && b.rate === TaxConstants.BasicRate);
     expect(basicRateBand).toBeDefined();
     expect(basicRateBand?.amount).toBe(4000);
@@ -45,7 +43,7 @@ describe('SavingsTaxService', () => {
     expect(totalSavingsTax).toBeCloseTo(800);
   });
 
-  it('should apply £500 savings allowance when savings push into higher rate', () => {
+  it('should apply Â£500 savings allowance when savings push into higher rate', () => {
     // Arrange: scenario based on C# Should_Apply_500_SavingsAllowance_When_Savings_Push_Into_Higher_Rate
     const service = new SavingsTaxService();
     const salary = 100800;
@@ -75,7 +73,7 @@ describe('SavingsTaxService', () => {
     // Savings income = 10,000 ? 9470 at basic, 530 at higher
     const savingsZero = result.find(b => b.rate === 0);
     expect(savingsZero).toBeDefined();
-    expect(savingsZero?.amount).toBe(500); // £500 savings allowance
+    expect(savingsZero?.amount).toBe(500); // Â£500 savings allowance
 
     const savingsBasic = result.find(b => b.band === TaxConstants.BasicBand && b.rate === TaxConstants.BasicRate);
     expect(savingsBasic).toBeDefined();
