@@ -1,16 +1,8 @@
 // jest.config.js
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-    preset: 'ts-jest',
+    preset: 'ts-jest/presets/default-esm',
     testEnvironment: 'node',
-    moduleFileExtensions: ['ts', 'js'],
-    testMatch: ['**/*.test.ts'],
-    transform: {
-        '^.+\\.ts$': 'ts-jest',
-    },
     extensionsToTreatAsEsm: ['.ts'],
-    globals: {
-        'ts-jest': {
-            useESM: true,
-        },
-    },
+    testMatch: ['**/*.test.ts'],
 };
