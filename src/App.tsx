@@ -46,23 +46,25 @@ function App() {
         value.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8">
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-8">
             <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">
                 UK Tax Calculator 2025/26
             </h1>
 
-            <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl">
+            <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl mx-auto">
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8 space-y-4">
-                    {fields.map(({ name, label }) => (
-                        <InputField
-                            key={name}
-                            name={name}
-                            label={label}
-                            value={input[name] as number}
-                            onChange={handleChange}
-                        />
-                    ))}
+                <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {fields.map(({ name, label }) => (
+                            <InputField
+                                key={name}
+                                name={name}
+                                label={label}
+                                value={input[name] as number}
+                                onChange={handleChange}
+                            />
+                        ))}
+                    </div>
 
                     <button
                         type="submit"
@@ -76,7 +78,7 @@ function App() {
 
                 {/* Results */}
                 {result && (
-                    <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-xl self-start">
+                    <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-xl self-center">
                         <h2 className="text-2xl font-bold text-blue-800 mb-4">Results</h2>
                         <div className="space-y-2 text-left">
                             <div className="flex justify-between">
