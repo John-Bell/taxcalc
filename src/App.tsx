@@ -51,10 +51,10 @@ function App() {
                 UK Tax Calculator 2025/26
             </h1>
 
-            <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl mx-auto items-center md:items-start">
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8 self-center md:self-start">
+                    <div className="grid grid-cols-2 gap-4 items-center">
                         {fields.map(({ name, label }) => (
                             <InputField
                                 key={name}

@@ -7,8 +7,11 @@ export interface InputFieldProps {
 
 export default function InputField({ name, label, value, onChange }: InputFieldProps) {
   return (
-    <div className="flex items-center gap-4 w-full">
-      <label htmlFor={name} className="w-56 text-right text-gray-700 font-medium">
+    <>
+      <label
+        htmlFor={name}
+        className="w-56 text-right text-gray-700 font-medium"
+      >
         {label}
       </label>
       <input
@@ -18,8 +21,8 @@ export default function InputField({ name, label, value, onChange }: InputFieldP
         min="0"
         value={value}
         onChange={onChange}
-        className="flex-1 px-3 py-2 border rounded text-right focus:ring-2"
+        className="w-full px-3 py-2 border rounded text-right focus:ring-2"
       />
-    </div>
+    </>
   );
 }
