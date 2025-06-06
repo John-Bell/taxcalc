@@ -46,7 +46,7 @@ function App() {
         value.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
 
     return (
-        <div className="bg-white text-black p-10 max-w-xl mx-auto">
+        <div className="calculator-container bg-white text-black">
             <h2 className="text-center text-2xl mb-6">UK Tax Calculator 2025/26</h2>
 
             {/* Form */}
