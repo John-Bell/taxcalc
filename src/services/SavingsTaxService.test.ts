@@ -50,7 +50,6 @@ describe('SavingsTaxService', () => {
     const rentalIncome = 0;
     const pensionIncome = 0;
     const untaxedInterest = 10000; // savings
-    const dividends = 0;
     const directPensionContrib = 60000;
     const personalAllowance = TaxConstants.StandardPersonalAllowance; // 12570
     const brbExtended = TaxConstants.BasicRateBand + directPensionContrib; // 37700 + 60000 = 97700
