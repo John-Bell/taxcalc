@@ -46,76 +46,70 @@ function App() {
         value.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8">
-            <h1 className="text-4xl font-bold text-blue-900 mb-8 text-center">
-                UK Tax Calculator 2025/26
-            </h1>
+        <div className="bg-white text-black p-10 max-w-xl mx-auto">
+            <h2 className="text-center text-2xl mb-6">UK Tax Calculator 2025/26</h2>
 
-            <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl mx-auto items-center md:items-start">
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-8 self-center md:self-start">
-                    <div className="grid grid-cols-2 gap-4 items-center">
-                        {fields.map(({ name, label }) => (
-                            <InputField
-                                key={name}
-                                name={name}
-                                label={label}
-                                value={input[name] as number}
-                                onChange={handleChange}
-                            />
-                        ))}
-                    </div>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="mb-8">
+                {fields.map(({ name, label }) => (
+                    <InputField
+                        key={name}
+                        name={name}
+                        label={label}
+                        value={input[name] as number}
+                        onChange={handleChange}
+                    />
+                ))}
 
-                    <button
-                        type="submit"
-                        className="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700"
-                    >
-                        Calculate
-                    </button>
-                    {error && <div className="text-red-600">{error}</div>}
-                </form>
+                <button
+                    type="submit"
+                    className="block mx-auto mt-5 px-5 py-2 bg-blue-600 text-white rounded"
+                >
+                    Calculate
+                </button>
+                {error && <div className="text-red-600 text-center mt-2">{error}</div>}
+            </form>
 
+            {/* Results */}
+            {result && (
+                <div className="section results">
+                    <h3 className="border-b-2 pb-1 mb-2 font-bold">Results</h3>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Personal Allowance:</span>
+                        <span>{formatGBP(result.personalAllowance)}</span>
+                    </p>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Extended Basic Rate Band:</span>
+                        <span>{formatGBP(result.brbExtended)}</span>
+                    </p>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Total Tax:</span>
+                        <span>{formatGBP(result.totalTax)}</span>
+                    </p>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Effective Tax Rate:</span>
+                        <span>{(result.effectiveTaxRate * 100).toFixed(2)}%</span>
+                    </p>
+                </div>
+            )}
 
-                {/* Results */}
-                {result && (
-                    <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-xl self-center">
-                        <h2 className="text-2xl font-bold text-blue-800 mb-4">Results</h2>
-                        <div className="space-y-2 text-left">
-                            <div className="flex justify-between">
-                                <span className="font-semibold">Personal Allowance:</span>
-                                <span>{formatGBP(result.personalAllowance)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="font-semibold">Extended Basic Rate Band:</span>
-                                <span>{formatGBP(result.brbExtended)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="font-semibold">Total Tax:</span>
-                                <span>{formatGBP(result.totalTax)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="font-semibold">Effective Tax Rate:</span>
-                                <span>{(result.effectiveTaxRate * 100).toFixed(2)}%</span>
-                            </div>
-                        </div>
-
-                        <h3 className="text-xl font-bold text-blue-700 mt-6 mb-2">
-                            Income Breakdown
-                        </h3>
-                        <div className="space-y-1 text-left">
-                            <div>
-                                General Income: {formatGBP(result.incomeBreakdown.generalIncome)}
-                            </div>
-                            <div>
-                                Savings Income: {formatGBP(result.incomeBreakdown.savingsIncome)}
-                            </div>
-                            <div>
-                                Dividend Income: {formatGBP(result.incomeBreakdown.dividendIncome)}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+            {result && (
+                <div className="section income mt-8">
+                    <h3 className="border-b-2 pb-1 mb-2 font-bold">Income Breakdown</h3>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>General Income</span>
+                        <span>{formatGBP(result.incomeBreakdown.generalIncome)}</span>
+                    </p>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Savings Income</span>
+                        <span>{formatGBP(result.incomeBreakdown.savingsIncome)}</span>
+                    </p>
+                    <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Dividend Income</span>
+                        <span>{formatGBP(result.incomeBreakdown.dividendIncome)}</span>
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
