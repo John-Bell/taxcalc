@@ -8,7 +8,8 @@ This is the React + TypeScript frontend for the UK Tax Calculator. It provides a
 
 ## 🚀 Features
 
-- Built with **React** and **TypeScript**
+- Built with **React**, **TypeScript**, and **Vite**
+- Configured as a **Progressive Web App** with offline support
 - Interactive form for entering income details
 - Real-time calculation of tax liabilities
 - Support for:
@@ -19,19 +20,29 @@ This is the React + TypeScript frontend for the UK Tax Calculator. It provides a
   - Untaxed savings interest
 - Visual breakdown of tax bands and allowances
 - Designed for UK tax rules (up to the 2025/26 tax year)
+- Encrypted backups stored via IndexedDB with export/import to iCloud Drive
 
 ---
 
 ## 📦 Getting Started
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18+ recommended)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-
 ### Install dependencies
 
 ```bash
-npm install
-# or
-yarn install
+pnpm install
+```
+
+### Run the app
+
+```bash
+pnpm dev
+```
+
+### Build for production
+
+```bash
+pnpm build
+pnpm preview
+```
+
+When the app first loads it requests persistent storage using `navigator.storage.persist()`. Use the **Export Backup**, **Import Backup**, and **Verify Backup** buttons in the UI to manage encrypted backups of your data.
