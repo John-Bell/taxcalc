@@ -3,6 +3,7 @@ import { TaxCalculationService } from './services/TaxCalculationService';
 import type { TaxCalculationInput } from './models/TaxCalculationInput';
 import type { TaxCalculationResult } from './models/TaxCalculationResult';
 import InputField from './components/InputField';
+import { VaultControls } from './vault';
 
 const initialInput: TaxCalculationInput = {
     salary: 0,
@@ -110,6 +111,14 @@ function App() {
                     </p>
                 </div>
             )}
+
+            <VaultControls
+                state={{ input, result }}
+                setState={(s) => {
+                    setInput(s.input);
+                    setResult(s.result);
+                }}
+            />
         </div>
     );
 }
