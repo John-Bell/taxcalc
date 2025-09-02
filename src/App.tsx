@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TaxCalculationService } from './services/TaxCalculationService';
 import type { TaxCalculationInput } from './models/TaxCalculationInput';
 import type { TaxCalculationResult } from './models/TaxCalculationResult';
 import InputField from './components/InputField';
-import { VaultControls } from './vault';
+import { useVault } from './useVault';
+import { BackupPanel } from './exportImport';
+import type { VaultV1 } from './model';
 
 const initialInput: TaxCalculationInput = {
     salary: 0,
@@ -26,6 +28,18 @@ function App() {
     const [input, setInput] = useState<TaxCalculationInput>(initialInput);
     const [result, setResult] = useState<TaxCalculationResult | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [passphrase, setPassphrase] = useState<string | null>(null);
+
+    useEffect(() => {
+        const p = prompt('Enter passphrase to unlock vault') || null;
+        if (p) setPassphrase(p);
+    }, []);
+
+    const vault: VaultV1 = { input, result };
+    useVault(vault, (s) => {
+        setInput(s.input);
+        setResult(s.result);
+    }, passphrase);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -112,12 +126,13 @@ function App() {
                 </div>
             )}
 
-            <VaultControls
-                state={{ input, result }}
+            <BackupPanel
+                state={vault}
                 setState={(s) => {
                     setInput(s.input);
                     setResult(s.result);
                 }}
+                passphrase={passphrase}
             />
         </div>
     );

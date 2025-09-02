@@ -46,3 +46,18 @@ pnpm preview
 ```
 
 When the app first loads it requests persistent storage using `navigator.storage.persist()`. Use the **Export Backup**, **Import Backup**, and **Verify Backup** buttons in the UI to manage encrypted backups of your data.
+
+### Install as a PWA
+
+- Open the app in Safari on iOS or any modern browser.
+- Tap the share button and choose **Add to Home Screen** to install.
+
+### Export/Import via iCloud Drive
+
+- Choose **Export Backup** to download `retirement.enc` and save it to iCloud Drive.
+- To restore, pick the file with **Import Backup** and enter your passphrase.
+- **Verify Backup** decrypts the file in memory without altering existing data.
+
+### Security
+
+Backups are end‑to‑end encrypted. The passphrase is never stored; if it is lost the data cannot be recovered.

@@ -4,5 +4,5 @@ module.exports = {
     preset: 'ts-jest/presets/default-esm',
     testEnvironment: 'node',
     extensionsToTreatAsEsm: ['.ts'],
-    testMatch: ['**/*.test.ts'],
+    testMatch: ['**/*.test.ts', '**/*.test.js'],
 };

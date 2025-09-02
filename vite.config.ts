@@ -17,19 +17,19 @@ export default defineConfig({
                 theme_color: '#0b5fff',
                 icons: [
                     {
-                        src: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3e%3crect width='192' height='192' fill='%230b5fff'/%3e%3c/svg%3e",
+                        src: '/pwa-192.png',
                         sizes: '192x192',
-                        type: 'image/svg+xml',
+                        type: 'image/png',
                     },
                     {
-                        src: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3crect width='512' height='512' fill='%230b5fff'/%3e%3c/svg%3e",
+                        src: '/pwa-512.png',
                         sizes: '512x512',
-                        type: 'image/svg+xml',
+                        type: 'image/png',
                     },
                     {
-                        src: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3crect width='512' height='512' fill='%230b5fff'/%3e%3c/svg%3e",
+                        src: '/pwa-maskable.png',
                         sizes: '512x512',
-                        type: 'image/svg+xml',
+                        type: 'image/png',
                         purpose: 'maskable',
                     },
                 ],

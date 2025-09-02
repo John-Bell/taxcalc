@@ -1,14 +1,22 @@
 import { useEffect } from 'react';
-import { db } from './db';
+import type { VaultV1 } from './model';
+import { saveVault, loadVault } from './vaultStore';
 
-export function useVault<T>(state: T, setState: (s: T) => void) {
-  useEffect(() => {
-    db.appState.get('app').then((rec) => {
-      if (rec) setState(rec.data as T);
-    });
-  }, [setState]);
+export function useVault(state: VaultV1, setState: (s: VaultV1) => void, passphrase: string | null) {
+    useEffect(() => {
+        if (!passphrase) return;
+        loadVault(passphrase).then((v) => {
+            if (v) setState(v);
+        }).catch(() => {
+            // ignore errors
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [passphrase]);
 
-  useEffect(() => {
-    db.appState.put({ id: 'app', data: state });
-  }, [state]);
+    useEffect(() => {
+        if (!passphrase) return;
+        saveVault(state, passphrase).catch(() => {
+            // ignore errors
+        });
+    }, [state, passphrase]);
 }

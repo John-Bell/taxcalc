@@ -1,19 +1,21 @@
 import Dexie, { Table } from 'dexie';
 
-export interface AppStateRecord {
-  id: string;
-  data: unknown;
+export interface VaultRecord {
+    id: string; // 'vault'
+    version: number;
+    updatedAt: number;
+    envelope: ArrayBuffer;
 }
 
 class AppDB extends Dexie {
-  appState!: Table<AppStateRecord, string>;
+    vault!: Table<VaultRecord, string>;
 
-  constructor() {
-    super('app-db');
-    this.version(1).stores({
-      appState: '&id',
-    });
-  }
+    constructor() {
+        super('app-db');
+        this.version(1).stores({
+            vault: '&id',
+        });
+    }
 }
 
 export const db = new AppDB();
