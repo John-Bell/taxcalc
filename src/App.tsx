@@ -5,16 +5,7 @@ import type { TaxCalculationResult } from './models/TaxCalculationResult';
 import InputField from './components/InputField';
 import { useVault } from './useVault';
 import { BackupPanel } from './exportImport';
-import type { VaultV1 } from './model';
-
-const initialInput: TaxCalculationInput = {
-    salary: 0,
-    rentalIncome: 0,
-    pensionIncome: 0,
-    untaxedInterest: 0,
-    dividends: 0,
-    directPensionContrib: 0,
-};
+import { createEmptyInput, type VaultV1 } from './model';
 
 const fields: { name: keyof TaxCalculationInput; label: string }[] = [
     { name: 'salary', label: 'Salary' },
@@ -25,7 +16,7 @@ const fields: { name: keyof TaxCalculationInput; label: string }[] = [
     { name: 'directPensionContrib', label: 'Direct Pension Contributions' },
 ];
 function App() {
-    const [input, setInput] = useState<TaxCalculationInput>(initialInput);
+    const [input, setInput] = useState<TaxCalculationInput>(() => createEmptyInput());
     const [result, setResult] = useState<TaxCalculationResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [passphrase, setPassphrase] = useState<string | null>(null);
