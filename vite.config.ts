@@ -11,23 +11,23 @@ export default defineConfig({
             manifest: {
                 name: 'Retirement Planner',
                 short_name: 'Retire',
-                start_url: '/',
+                start_url: '/taxcalc/',
                 display: 'standalone',
                 background_color: '#ffffff',
                 theme_color: '#0b5fff',
                 icons: [
                     {
-                        src: '/pwa-192.png',
+                        src: 'pwa-192.png',
                         sizes: '192x192',
                         type: 'image/png',
                     },
                     {
-                        src: '/pwa-512.png',
+                        src: 'pwa-512.png',
                         sizes: '512x512',
                         type: 'image/png',
                     },
                     {
-                        src: '/pwa-maskable.png',
+                        src: 'pwa-maskable.png',
                         sizes: '512x512',
                         type: 'image/png',
                         purpose: 'maskable',
@@ -35,7 +35,7 @@ export default defineConfig({
                 ],
             },
             workbox: {
-                navigateFallback: '/index.html',
+                navigateFallback: 'index.html',
             },
         }),
     ],
