@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TaxCalculationService } from './services/TaxCalculationService';
 import type { TaxCalculationInput } from './models/TaxCalculationInput';
 import type { TaxCalculationResult } from './models/TaxCalculationResult';
 import InputField from './components/InputField';
-import { useVault } from './useVault';
-import { BackupPanel } from './exportImport';
-import { createEmptyInput, type VaultV1 } from './model';
+import { createEmptyInput } from './model';
 
 const fields: { name: keyof TaxCalculationInput; label: string }[] = [
     { name: 'salary', label: 'Salary' },
@@ -15,22 +13,11 @@ const fields: { name: keyof TaxCalculationInput; label: string }[] = [
     { name: 'dividends', label: 'Dividends' },
     { name: 'directPensionContrib', label: 'Direct Pension Contributions' },
 ];
+
 function App() {
     const [input, setInput] = useState<TaxCalculationInput>(() => createEmptyInput());
     const [result, setResult] = useState<TaxCalculationResult | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [passphrase, setPassphrase] = useState<string | null>(null);
-
-    useEffect(() => {
-        const p = prompt('Enter passphrase to unlock vault') || null;
-        if (p) setPassphrase(p);
-    }, []);
-
-    const vault: VaultV1 = { input, result };
-    useVault(vault, (s) => {
-        setInput(s.input);
-        setResult(s.result);
-    }, passphrase);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -116,15 +103,6 @@ function App() {
                     </p>
                 </div>
             )}
-
-            <BackupPanel
-                state={vault}
-                setState={(s) => {
-                    setInput(s.input);
-                    setResult(s.result);
-                }}
-                passphrase={passphrase}
-            />
         </div>
     );
 }

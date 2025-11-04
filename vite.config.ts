@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite';
-import plugin from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [
-        plugin(),
+        react(),
         VitePWA({
             registerType: 'autoUpdate',
             manifest: {
@@ -39,6 +39,7 @@ export default defineConfig({
             },
         }),
     ],
+    base: '/taxcalc/',
     server: {
         port: 62532,
     },
