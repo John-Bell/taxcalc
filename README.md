@@ -50,3 +50,7 @@ pnpm preview
 - Open the app in Safari on iOS or any modern browser.
 - Tap the share button and choose **Add to Home Screen** to install.
 
+## 🚀 Deployment
+
+The site is published at [https://john-bell.github.io/taxcalc/](https://john-bell.github.io/taxcalc/). Deep links remain functional thanks to the GitHub Pages 404 fallback and client-side redirect restoration.
+
