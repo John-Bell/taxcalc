@@ -1,10 +1,4 @@
 import type { TaxCalculationInput } from './models/TaxCalculationInput';
-import type { TaxCalculationResult } from './models/TaxCalculationResult';
-
-export interface VaultV1 {
-    input: TaxCalculationInput;
-    result: TaxCalculationResult | null;
-}
 
 const zeroInput: TaxCalculationInput = {
     salary: 0,
@@ -18,8 +12,4 @@ const zeroInput: TaxCalculationInput = {
 
 export function createEmptyInput(): TaxCalculationInput {
     return { ...zeroInput };
-}
-
-export function createEmptyVault(): VaultV1 {
-    return { input: createEmptyInput(), result: null };
 }
