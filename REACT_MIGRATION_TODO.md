@@ -14,7 +14,7 @@ This document outlines the steps to migrate C# console app service logic to a ne
 7. Write unit tests for the new service logic using Jest (in `src/__tests__` or similar).
 8. Verify the logic matches the C# implementation by comparing test results.
 9. Commit changes in a dedicated branch for this service.
-10. Repeat steps 3–9 for each additional service, using a new branch each time.
+10. Repeat steps 3 to 9 for each additional service, using a new branch each time.
 11. (Later) Plan and implement UI components to interact with the ported services.
 
 > **Note:** UI components are not required at this stage. Focus on service logic and tests for incremental migration.
