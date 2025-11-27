@@ -1,45 +1,135 @@
-export const TaxConstants = {
-  // Personal Allowance
-  StandardPersonalAllowance: 12570,
-  PersonalAllowanceThreshold: 100000,
-  PersonalAllowanceRemovalThreshold: 125140,
-  PersonalAllowanceReductionRate: 0.5, // £1 reduction per £2 over threshold
+export type TaxYearConstants = {
+  StandardPersonalAllowance: number;
+  PersonalAllowanceThreshold: number;
+  PersonalAllowanceRemovalThreshold: number;
+  PersonalAllowanceReductionRate: number;
 
-  // Basic Rate Band
-  BasicRateBand: 37700,
-  BasicRate: 0.20,
+  BasicRateBand: number;
+  BasicRate: number;
 
-  // Higher Rate Band
-  HigherRateBand: 125140,
-  HigherRate: 0.40,
+  HigherRateBand: number;
+  HigherRate: number;
 
-  // Additional Rate
-  AdditionalRate: 0.45,
+  AdditionalRate: number;
 
-  // Dividend Rates
-  DividendAllowance: 500, // Updated for 2025/2026 tax year
-  DividendBasicRate: 0.0875,
-  DividendHigherRate: 0.3375,
-  DividendAdditionalRate: 0.3935,
+  DividendAllowance: number;
+  DividendBasicRate: number;
+  DividendHigherRate: number;
+  DividendAdditionalRate: number;
 
-  // Savings Allowance
-  SavingsAllowanceBasic: 1000,
-  SavingsAllowanceHigher: 500,
-  SavingsAllowanceAdditional: 0,
+  SavingsAllowanceBasic: number;
+  SavingsAllowanceHigher: number;
+  SavingsAllowanceAdditional: number;
 
-  // Starting Rate for Savings
-  StartingRateForSavingsThreshold: 5000, // £5,000 starting rate for savings
-  StartingRateForSavings: 0,
+  StartingRateForSavingsThreshold: number;
+  StartingRateForSavings: number;
 
-  // Tax Band Types
-  GeneralBandType: "General",
-  SavingsBandType: "Savings",
-  DividendsBandType: "Dividends",
+  GeneralBandType: string;
+  SavingsBandType: string;
+  DividendsBandType: string;
 
-  // Tax Band Names
-  AllowanceBand: "Allowance",
-  BasicBand: "Basic",
-  HigherBand: "Higher",
-  AdditionalBand: "Additional",
-  StartingBand: "Starting",
+  AllowanceBand: string;
+  BasicBand: string;
+  HigherBand: string;
+  AdditionalBand: string;
+  StartingBand: string;
+};
+
+const DEFAULT_TAX_YEAR = '2025-2026';
+
+export const TAX_YEAR_CONSTANTS: Record<string, TaxYearConstants> = {
+  '2024-2025': {
+    StandardPersonalAllowance: 12570,
+    PersonalAllowanceThreshold: 100000,
+    PersonalAllowanceRemovalThreshold: 125140,
+    PersonalAllowanceReductionRate: 0.5,
+
+    BasicRateBand: 37700,
+    BasicRate: 0.2,
+
+    HigherRateBand: 125140,
+    HigherRate: 0.4,
+
+    AdditionalRate: 0.45,
+
+    DividendAllowance: 1000,
+    DividendBasicRate: 0.0875,
+    DividendHigherRate: 0.3375,
+    DividendAdditionalRate: 0.3935,
+
+    SavingsAllowanceBasic: 1000,
+    SavingsAllowanceHigher: 1000,
+    SavingsAllowanceAdditional: 0,
+
+    StartingRateForSavingsThreshold: 5000,
+    StartingRateForSavings: 0,
+
+    GeneralBandType: 'General',
+    SavingsBandType: 'Savings',
+    DividendsBandType: 'Dividends',
+
+    AllowanceBand: 'Allowance',
+    BasicBand: 'Basic',
+    HigherBand: 'Higher',
+    AdditionalBand: 'Additional',
+    StartingBand: 'Starting',
+  },
+  '2025-2026': {
+    StandardPersonalAllowance: 12570,
+    PersonalAllowanceThreshold: 100000,
+    PersonalAllowanceRemovalThreshold: 125140,
+    PersonalAllowanceReductionRate: 0.5,
+
+    BasicRateBand: 37700,
+    BasicRate: 0.2,
+
+    HigherRateBand: 125140,
+    HigherRate: 0.4,
+
+    AdditionalRate: 0.45,
+
+    DividendAllowance: 500,
+    DividendBasicRate: 0.0875,
+    DividendHigherRate: 0.3375,
+    DividendAdditionalRate: 0.3935,
+
+    SavingsAllowanceBasic: 1000,
+    SavingsAllowanceHigher: 500,
+    SavingsAllowanceAdditional: 0,
+
+    StartingRateForSavingsThreshold: 5000,
+    StartingRateForSavings: 0,
+
+    GeneralBandType: 'General',
+    SavingsBandType: 'Savings',
+    DividendsBandType: 'Dividends',
+
+    AllowanceBand: 'Allowance',
+    BasicBand: 'Basic',
+    HigherBand: 'Higher',
+    AdditionalBand: 'Additional',
+    StartingBand: 'Starting',
+  },
+};
+
+const getCurrentTaxYearKey = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  // UK tax year starts in April; if before April, use previous year as start.
+  const startYear = now.getMonth() >= 3 ? year : year - 1;
+  return `${startYear}-${startYear + 1}`;
+};
+
+export const getTaxConstants = (taxYear?: string): TaxYearConstants => {
+  const requestedYear = taxYear && TAX_YEAR_CONSTANTS[taxYear] ? taxYear : undefined;
+  const currentYear = getCurrentTaxYearKey();
+  const resolvedYear =
+    requestedYear ?? (TAX_YEAR_CONSTANTS[currentYear] ? currentYear : DEFAULT_TAX_YEAR);
+  return TAX_YEAR_CONSTANTS[resolvedYear];
+};
+
+export const getDefaultTaxYear = (taxYear?: string): string => {
+  const requestedYear = taxYear && TAX_YEAR_CONSTANTS[taxYear] ? taxYear : undefined;
+  const currentYear = getCurrentTaxYearKey();
+  return requestedYear ?? (TAX_YEAR_CONSTANTS[currentYear] ? currentYear : DEFAULT_TAX_YEAR);
 };

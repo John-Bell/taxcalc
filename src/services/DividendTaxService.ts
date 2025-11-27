@@ -1,19 +1,22 @@
-import { TaxConstants } from '../constants/taxConstants';
+import { getTaxConstants } from '../constants/taxConstants';
 import { BrbTracker } from '../models/BrbTracker';
 import type { TaxBandResult } from '../models/TaxBandResult';
 
 export class DividendTaxService {
-  calculateDividendTax(dividendIncome: number, brbTracker: BrbTracker): TaxBandResult[] {
+  constructor(private readonly taxYear?: string) {}
+
+  calculateDividendTax(dividendIncome: number, brbTracker: BrbTracker, taxYear?: string): TaxBandResult[] {
+    const taxConstants = getTaxConstants(taxYear ?? this.taxYear);
     const taxBands: TaxBandResult[] = [];
     if (dividendIncome <= 0) return taxBands;
 
     // Apply dividend allowance
     let remainingDividends = dividendIncome;
-    if (remainingDividends > 0 && TaxConstants.DividendAllowance > 0) {
-      const allowanceAmount = Math.min(remainingDividends, TaxConstants.DividendAllowance);
+    if (remainingDividends > 0 && taxConstants.DividendAllowance > 0) {
+      const allowanceAmount = Math.min(remainingDividends, taxConstants.DividendAllowance);
       taxBands.push({
-        band: TaxConstants.AllowanceBand,
-        type: TaxConstants.DividendsBandType,
+        band: taxConstants.AllowanceBand,
+        type: taxConstants.DividendsBandType,
         amount: allowanceAmount,
         rate: 0,
         tax: 0,
@@ -27,11 +30,11 @@ export class DividendTaxService {
       if (remainingDividends > 0 && brbTracker.remaining > 0) {
         const basicRateAmount = brbTracker.use(remainingDividends);
         taxBands.push({
-          band: TaxConstants.BasicBand,
-          type: TaxConstants.DividendsBandType,
+          band: taxConstants.BasicBand,
+          type: taxConstants.DividendsBandType,
           amount: basicRateAmount,
-          rate: TaxConstants.DividendBasicRate,
-          tax: basicRateAmount * TaxConstants.DividendBasicRate,
+          rate: taxConstants.DividendBasicRate,
+          tax: basicRateAmount * taxConstants.DividendBasicRate,
         });
         remainingDividends -= basicRateAmount;
       }
@@ -40,14 +43,14 @@ export class DividendTaxService {
       if (remainingDividends > 0) {
         const higherRateAmount = Math.min(
           remainingDividends,
-          TaxConstants.HigherRateBand - TaxConstants.BasicRateBand
+          taxConstants.HigherRateBand - taxConstants.BasicRateBand
         );
         taxBands.push({
-          band: TaxConstants.HigherBand,
-          type: TaxConstants.DividendsBandType,
+          band: taxConstants.HigherBand,
+          type: taxConstants.DividendsBandType,
           amount: higherRateAmount,
-          rate: TaxConstants.DividendHigherRate,
-          tax: higherRateAmount * TaxConstants.DividendHigherRate,
+          rate: taxConstants.DividendHigherRate,
+          tax: higherRateAmount * taxConstants.DividendHigherRate,
         });
         remainingDividends -= higherRateAmount;
       }
@@ -55,11 +58,11 @@ export class DividendTaxService {
       // Additional rate
       if (remainingDividends > 0) {
         taxBands.push({
-          band: TaxConstants.AdditionalBand,
-          type: TaxConstants.DividendsBandType,
+          band: taxConstants.AdditionalBand,
+          type: taxConstants.DividendsBandType,
           amount: remainingDividends,
-          rate: TaxConstants.DividendAdditionalRate,
-          tax: remainingDividends * TaxConstants.DividendAdditionalRate,
+          rate: taxConstants.DividendAdditionalRate,
+          tax: remainingDividends * taxConstants.DividendAdditionalRate,
         });
       }
     }

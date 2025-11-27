@@ -1,4 +1,4 @@
-import { TaxConstants } from '../constants/taxConstants';
+import { getDefaultTaxYear, getTaxConstants } from '../constants/taxConstants';
 import { BrbTracker } from '../models/BrbTracker';
 import { PersonalAllowanceTracker } from '../models/PersonalAllowanceTracker';
 import type { TaxCalculationInput } from '../models/TaxCalculationInput';
@@ -12,24 +12,29 @@ export class TaxCalculationService {
   private generalTaxService: GeneralTaxService;
   private savingsTaxService: SavingsTaxService;
   private dividendTaxService: DividendTaxService;
+  private taxYear?: string;
 
-  constructor() {
-    this.generalTaxService = new GeneralTaxService();
-    this.savingsTaxService = new SavingsTaxService();
-    this.dividendTaxService = new DividendTaxService();
+  constructor(taxYear?: string) {
+    this.taxYear = taxYear;
+    this.generalTaxService = new GeneralTaxService(taxYear);
+    this.savingsTaxService = new SavingsTaxService(taxYear);
+    this.dividendTaxService = new DividendTaxService(taxYear);
   }
 
-  calculateTax(input: TaxCalculationInput): TaxCalculationResult {
+  calculateTax(input: TaxCalculationInput, taxYear?: string): TaxCalculationResult {
+    const resolvedTaxYear = getDefaultTaxYear(taxYear ?? this.taxYear);
+    const taxConstants = getTaxConstants(resolvedTaxYear);
     const incomeBreakdown: IncomeBreakdown = this.calculateIncomeBreakdown(input);
     const taxByBand: TaxBandResult[] = [];
 
     // Calculate personal allowance
     const personalAllowance = this.calculatePersonalAllowance(
-      this.getAdjustedNetIncome(input)
+      this.getAdjustedNetIncome(input),
+      taxConstants
     );
 
     // Calculate extended basic rate band
-    const brbExtended = TaxConstants.BasicRateBand + input.directPensionContrib;
+    const brbExtended = taxConstants.BasicRateBand + input.directPensionContrib;
 
     // Initialize trackers
     const brbTracker = new BrbTracker(brbExtended);
@@ -44,14 +49,33 @@ export class TaxCalculationService {
     const generalIncomeAfterPA = paTracker.applyTo(generalIncome);
 
     // Calculate general income tax
-    const generalBands = this.generalTaxService.calculateGeneralIncomeTax(generalIncomeAfterPA, brbTracker);
+    const generalBands = this.generalTaxService.calculateGeneralIncomeTax(
+      generalIncomeAfterPA,
+      brbTracker,
+      resolvedTaxYear
+    );
     taxByBand.push(...generalBands);
 
     // Calculate savings tax (pass generalBands)
-    taxByBand.push(...this.savingsTaxService.calculateSavingsTax(savingsIncome, generalIncome, personalAllowance, brbTracker, generalBands));
+    taxByBand.push(
+      ...this.savingsTaxService.calculateSavingsTax(
+        savingsIncome,
+        generalIncome,
+        personalAllowance,
+        brbTracker,
+        generalBands,
+        resolvedTaxYear
+      )
+    );
 
     // Calculate dividend tax
-    taxByBand.push(...this.dividendTaxService.calculateDividendTax(dividendIncome, brbTracker));
+    taxByBand.push(
+      ...this.dividendTaxService.calculateDividendTax(
+        dividendIncome,
+        brbTracker,
+        resolvedTaxYear
+      )
+    );
 
     // Calculate totals
     const totalTax = taxByBand.reduce((sum, band) => sum + band.tax, 0);
@@ -65,7 +89,13 @@ export class TaxCalculationService {
       taxByBand,
       totalTax,
       effectiveTaxRate,
-      taxableIncome: Math.max(0, incomeBreakdown.generalIncome + incomeBreakdown.savingsIncome + incomeBreakdown.dividendIncome - personalAllowance),
+      taxableIncome: Math.max(
+        0,
+        incomeBreakdown.generalIncome +
+          incomeBreakdown.savingsIncome +
+          incomeBreakdown.dividendIncome -
+          personalAllowance
+      ),
     };
   }
 
@@ -77,12 +107,14 @@ export class TaxCalculationService {
     };
   }
 
-  private calculatePersonalAllowance(adjustedNetIncome: number): number {
-    if (adjustedNetIncome >= TaxConstants.PersonalAllowanceRemovalThreshold) return 0;
-    if (adjustedNetIncome <= TaxConstants.PersonalAllowanceThreshold) return TaxConstants.StandardPersonalAllowance;
-    // Reduce allowance by £1 for every £2 over threshold
-    const reduction = Math.floor((adjustedNetIncome - TaxConstants.PersonalAllowanceThreshold) * TaxConstants.PersonalAllowanceReductionRate);
-    return Math.max(0, TaxConstants.StandardPersonalAllowance - reduction);
+  private calculatePersonalAllowance(adjustedNetIncome: number, taxConstants = getTaxConstants()): number {
+    if (adjustedNetIncome >= taxConstants.PersonalAllowanceRemovalThreshold) return 0;
+    if (adjustedNetIncome <= taxConstants.PersonalAllowanceThreshold) return taxConstants.StandardPersonalAllowance;
+    // Reduce allowance by 1 for every 2 over threshold
+    const reduction = Math.floor(
+      (adjustedNetIncome - taxConstants.PersonalAllowanceThreshold) * taxConstants.PersonalAllowanceReductionRate
+    );
+    return Math.max(0, taxConstants.StandardPersonalAllowance - reduction);
   }
 
   private getTotalIncome(input: TaxCalculationInput): number {
