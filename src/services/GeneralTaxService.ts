@@ -1,9 +1,16 @@
-import { TaxConstants } from '../constants/taxConstants';
+import { getTaxConstants } from '../constants/taxConstants';
 import { BrbTracker } from '../models/BrbTracker';
 import type { TaxBandResult } from '../models/TaxBandResult';
 
 export class GeneralTaxService {
-  calculateGeneralIncomeTax(income: number, brbTracker: BrbTracker): TaxBandResult[] {
+  constructor(private readonly taxYear?: string) {}
+
+  calculateGeneralIncomeTax(
+    income: number,
+    brbTracker: BrbTracker,
+    taxYear?: string
+  ): TaxBandResult[] {
+    const taxConstants = getTaxConstants(taxYear ?? this.taxYear);
     const taxBands: TaxBandResult[] = [];
     let remainingIncome = income;
 
@@ -11,11 +18,11 @@ export class GeneralTaxService {
     if (remainingIncome > 0 && brbTracker.remaining > 0) {
       const basicRateAmount = brbTracker.use(remainingIncome);
       taxBands.push({
-        band: TaxConstants.BasicBand,
-        type: TaxConstants.GeneralBandType,
+        band: taxConstants.BasicBand,
+        type: taxConstants.GeneralBandType,
         amount: basicRateAmount,
-        rate: TaxConstants.BasicRate,
-        tax: basicRateAmount * TaxConstants.BasicRate,
+        rate: taxConstants.BasicRate,
+        tax: basicRateAmount * taxConstants.BasicRate,
       });
       remainingIncome -= basicRateAmount;
     }
@@ -24,14 +31,14 @@ export class GeneralTaxService {
     if (remainingIncome > 0) {
       const higherRateAmount = Math.min(
         remainingIncome,
-        TaxConstants.HigherRateBand - TaxConstants.BasicRateBand
+        taxConstants.HigherRateBand - taxConstants.BasicRateBand
       );
       taxBands.push({
-        band: TaxConstants.HigherBand,
-        type: TaxConstants.GeneralBandType,
+        band: taxConstants.HigherBand,
+        type: taxConstants.GeneralBandType,
         amount: higherRateAmount,
-        rate: TaxConstants.HigherRate,
-        tax: higherRateAmount * TaxConstants.HigherRate,
+        rate: taxConstants.HigherRate,
+        tax: higherRateAmount * taxConstants.HigherRate,
       });
       remainingIncome -= higherRateAmount;
     }
@@ -39,11 +46,11 @@ export class GeneralTaxService {
     // Additional rate
     if (remainingIncome > 0) {
       taxBands.push({
-        band: TaxConstants.AdditionalBand,
-        type: TaxConstants.GeneralBandType,
+        band: taxConstants.AdditionalBand,
+        type: taxConstants.GeneralBandType,
         amount: remainingIncome,
-        rate: TaxConstants.AdditionalRate,
-        tax: remainingIncome * TaxConstants.AdditionalRate,
+        rate: taxConstants.AdditionalRate,
+        tax: remainingIncome * taxConstants.AdditionalRate,
       });
     }
 

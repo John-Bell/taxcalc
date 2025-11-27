@@ -1,15 +1,19 @@
-import { TaxConstants } from '../constants/taxConstants';
+import { getTaxConstants } from '../constants/taxConstants';
 import { BrbTracker } from '../models/BrbTracker';
 import type { TaxBandResult } from '../models/TaxBandResult';
 
 export class SavingsTaxService {
+  constructor(private readonly taxYear?: string) {}
+
   calculateSavingsTax(
     savingsIncome: number,
     grossNonSavingsIncome: number,
     personalAllowance: number,
     brbTracker: BrbTracker,
-    generalTaxBands: TaxBandResult[] = []
+    generalTaxBands: TaxBandResult[] = [],
+    taxYear?: string
   ): TaxBandResult[] {
+    const taxConstants = getTaxConstants(taxYear ?? this.taxYear);
     const taxBands: TaxBandResult[] = [];
     if (savingsIncome <= 0) return taxBands;
 
@@ -18,15 +22,15 @@ export class SavingsTaxService {
 
     // STARTING RATE
     if (grossNonSavingsIncome < personalAllowance) {
-      const startingRateLimit = 5000;
+      const startingRateLimit = taxConstants.StartingRateForSavingsThreshold;
       const maxStarting = Math.min(startingRateLimit, personalAllowance - grossNonSavingsIncome);
       const startingApplied = Math.min(remainingSavings, maxStarting);
       if (startingApplied > 0) {
         taxBands.push({
-          band: TaxConstants.StartingBand,
-          type: TaxConstants.SavingsBandType,
+          band: taxConstants.StartingBand,
+          type: taxConstants.SavingsBandType,
           amount: startingApplied,
-          rate: TaxConstants.StartingRateForSavings,
+          rate: taxConstants.StartingRateForSavings,
           tax: 0,
         });
         remainingSavings -= startingApplied;
@@ -40,7 +44,7 @@ export class SavingsTaxService {
       maxRateApplied = Math.max(maxRateApplied, rate);
       pendingBands.push({
         band: bandName,
-        type: TaxConstants.SavingsBandType,
+        type: taxConstants.SavingsBandType,
         amount: income,
         rate: rate,
         tax: income * rate,
@@ -49,25 +53,25 @@ export class SavingsTaxService {
 
     // BASIC RATE BAND
     const basicRateUsed = brbTracker.use(remainingSavings);
-    addBand(TaxConstants.BasicBand, basicRateUsed, TaxConstants.BasicRate);
+    addBand(taxConstants.BasicBand, basicRateUsed, taxConstants.BasicRate);
     remainingSavings -= basicRateUsed;
 
     // HIGHER RATE BAND
-    const higherRateLimit = TaxConstants.HigherRateBand - TaxConstants.BasicRateBand;
+    const higherRateLimit = taxConstants.HigherRateBand - taxConstants.BasicRateBand;
     const higherRateUsed = Math.min(remainingSavings, higherRateLimit);
-    addBand(TaxConstants.HigherBand, higherRateUsed, TaxConstants.HigherRate);
+    addBand(taxConstants.HigherBand, higherRateUsed, taxConstants.HigherRate);
     remainingSavings -= higherRateUsed;
 
     // ADDITIONAL RATE BAND
-    addBand(TaxConstants.AdditionalBand, remainingSavings, TaxConstants.AdditionalRate);
+    addBand(taxConstants.AdditionalBand, remainingSavings, taxConstants.AdditionalRate);
 
     // Now apply savings allowance based on max rate seen
     let savingsAllowance =
-      maxRateApplied >= TaxConstants.AdditionalRate
-        ? 0
-        : maxRateApplied >= TaxConstants.HigherRate
-        ? TaxConstants.SavingsAllowanceHigher
-        : TaxConstants.SavingsAllowanceBasic;
+      maxRateApplied >= taxConstants.AdditionalRate
+        ? taxConstants.SavingsAllowanceAdditional
+        : maxRateApplied >= taxConstants.HigherRate
+        ? taxConstants.SavingsAllowanceHigher
+        : taxConstants.SavingsAllowanceBasic;
 
     for (const band of pendingBands) {
       const originalAmount = band.amount;
