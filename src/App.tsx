@@ -4,6 +4,7 @@ import type { TaxCalculationInput } from './models/TaxCalculationInput';
 import type { TaxCalculationResult } from './models/TaxCalculationResult';
 import InputField from './components/InputField';
 import { createEmptyInput } from './model';
+import { TAX_YEAR_CONSTANTS, getDefaultTaxYear } from './constants/taxConstants';
 
 const fields: { name: keyof TaxCalculationInput; label: string }[] = [
     { name: 'salary', label: 'Salary' },
@@ -14,22 +15,34 @@ const fields: { name: keyof TaxCalculationInput; label: string }[] = [
     { name: 'directPensionContrib', label: 'Direct Pension Contributions' },
 ];
 
+const TAX_YEAR_OPTIONS = Object.keys(TAX_YEAR_CONSTANTS).sort().reverse();
+
+const formatTaxYearLabel = (taxYear: string) => {
+    const [start, end] = taxYear.split('-');
+    return end ? `${start}/${end.slice(2)}` : taxYear;
+};
+
 function App() {
     const [input, setInput] = useState<TaxCalculationInput>(() => createEmptyInput());
     const [result, setResult] = useState<TaxCalculationResult | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [taxYear, setTaxYear] = useState<string>(() => getDefaultTaxYear());
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setInput((prev) => ({ ...prev, [name]: Number(value) }));
     };
 
+    const handleTaxYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setTaxYear(e.target.value);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         try {
-            const service = new TaxCalculationService();
-            setResult(service.calculateTax(input));
+            const service = new TaxCalculationService(taxYear);
+            setResult(service.calculateTax(input, taxYear));
         } catch {
             setError('Calculation error. Please check your input.');
         }
@@ -40,10 +53,33 @@ function App() {
 
     return (
         <div className="calculator-container bg-white text-black">
-            <h2 className="text-center text-2xl mb-6">UK Tax Calculator 2025/26</h2>
+            <h2 className="text-center text-2xl mb-6">
+                UK Tax Calculator {formatTaxYearLabel(taxYear)}
+            </h2>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="mb-8">
+                <div className="flex justify-between mb-4">
+                    <label
+                        htmlFor="taxYear"
+                        className="w-44 text-right mr-2"
+                    >
+                        Tax Year
+                    </label>
+                    <select
+                        id="taxYear"
+                        name="taxYear"
+                        value={taxYear}
+                        onChange={handleTaxYearChange}
+                        className="w-52 px-2 py-1 border rounded text-right"
+                    >
+                        {TAX_YEAR_OPTIONS.map((year) => (
+                            <option key={year} value={year}>
+                                {formatTaxYearLabel(year)}
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 {fields.map(({ name, label }) => (
                     <InputField
                         key={name}
