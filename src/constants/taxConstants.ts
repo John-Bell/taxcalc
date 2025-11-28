@@ -17,6 +17,14 @@ export type TaxYearConstants = {
   DividendHigherRate: number;
   DividendAdditionalRate: number;
 
+  SavingsBasicRate: number;
+  SavingsHigherRate: number;
+  SavingsAdditionalRate: number;
+
+  RentalBasicRate: number;
+  RentalHigherRate: number;
+  RentalAdditionalRate: number;
+
   SavingsAllowanceBasic: number;
   SavingsAllowanceHigher: number;
   SavingsAllowanceAdditional: number;
@@ -57,6 +65,14 @@ export const TAX_YEAR_CONSTANTS: Record<string, TaxYearConstants> = {
     DividendHigherRate: 0.3375,
     DividendAdditionalRate: 0.3935,
 
+    SavingsBasicRate: 0.2,
+    SavingsHigherRate: 0.4,
+    SavingsAdditionalRate: 0.45,
+
+    RentalBasicRate: 0.2,
+    RentalHigherRate: 0.4,
+    RentalAdditionalRate: 0.45,
+
     SavingsAllowanceBasic: 1000,
     SavingsAllowanceHigher: 1000,
     SavingsAllowanceAdditional: 0,
@@ -92,6 +108,14 @@ export const TAX_YEAR_CONSTANTS: Record<string, TaxYearConstants> = {
     DividendBasicRate: 0.0875,
     DividendHigherRate: 0.3375,
     DividendAdditionalRate: 0.3935,
+
+    SavingsBasicRate: 0.2,
+    SavingsHigherRate: 0.4,
+    SavingsAdditionalRate: 0.45,
+
+    RentalBasicRate: 0.2,
+    RentalHigherRate: 0.4,
+    RentalAdditionalRate: 0.45,
 
     SavingsAllowanceBasic: 1000,
     SavingsAllowanceHigher: 500,
