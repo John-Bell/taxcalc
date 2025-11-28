@@ -130,6 +130,10 @@ function App() {
                         <span>{formatGBP(result.incomeBreakdown.generalIncome)}</span>
                     </p>
                     <p className="flex justify-between max-w-xs mx-auto">
+                        <span>Rental Income</span>
+                        <span>{formatGBP(result.incomeBreakdown.rentalIncome)}</span>
+                    </p>
+                    <p className="flex justify-between max-w-xs mx-auto">
                         <span>Savings Income</span>
                         <span>{formatGBP(result.incomeBreakdown.savingsIncome)}</span>
                     </p>

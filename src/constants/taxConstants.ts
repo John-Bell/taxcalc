@@ -25,6 +25,8 @@ export type TaxYearConstants = {
   RentalHigherRate: number;
   RentalAdditionalRate: number;
 
+  RentalBandType: string;
+
   SavingsAllowanceBasic: number;
   SavingsAllowanceHigher: number;
   SavingsAllowanceAdditional: number;
@@ -73,6 +75,8 @@ export const TAX_YEAR_CONSTANTS: Record<string, TaxYearConstants> = {
     RentalHigherRate: 0.4,
     RentalAdditionalRate: 0.45,
 
+    RentalBandType: 'Rental',
+
     SavingsAllowanceBasic: 1000,
     SavingsAllowanceHigher: 1000,
     SavingsAllowanceAdditional: 0,
@@ -116,6 +120,8 @@ export const TAX_YEAR_CONSTANTS: Record<string, TaxYearConstants> = {
     RentalBasicRate: 0.2,
     RentalHigherRate: 0.4,
     RentalAdditionalRate: 0.45,
+
+    RentalBandType: 'Rental',
 
     SavingsAllowanceBasic: 1000,
     SavingsAllowanceHigher: 500,
