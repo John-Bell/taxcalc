@@ -21,8 +21,8 @@ export class GeneralTaxService {
         band: taxConstants.BasicBand,
         type: taxConstants.GeneralBandType,
         amount: basicRateAmount,
-        rate: taxConstants.BasicRate,
-        tax: basicRateAmount * taxConstants.BasicRate,
+        rate: taxConstants.RentalBasicRate,
+        tax: basicRateAmount * taxConstants.RentalBasicRate,
       });
       remainingIncome -= basicRateAmount;
     }
@@ -37,8 +37,8 @@ export class GeneralTaxService {
         band: taxConstants.HigherBand,
         type: taxConstants.GeneralBandType,
         amount: higherRateAmount,
-        rate: taxConstants.HigherRate,
-        tax: higherRateAmount * taxConstants.HigherRate,
+        rate: taxConstants.RentalHigherRate,
+        tax: higherRateAmount * taxConstants.RentalHigherRate,
       });
       remainingIncome -= higherRateAmount;
     }
@@ -49,8 +49,8 @@ export class GeneralTaxService {
         band: taxConstants.AdditionalBand,
         type: taxConstants.GeneralBandType,
         amount: remainingIncome,
-        rate: taxConstants.AdditionalRate,
-        tax: remainingIncome * taxConstants.AdditionalRate,
+        rate: taxConstants.RentalAdditionalRate,
+        tax: remainingIncome * taxConstants.RentalAdditionalRate,
       });
     }
 

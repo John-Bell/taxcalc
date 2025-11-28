@@ -33,13 +33,19 @@ describe('SavingsTaxService', () => {
     expect(allowanceBand?.amount).toBe(constants.SavingsAllowanceBasic);
     expect(allowanceBand?.tax).toBe(0);
 
-    const basicRateBand = result.find(b => b.band === constants.BasicBand && b.rate === constants.BasicRate);
+    const basicRateBand = result.find(
+      b => b.band === constants.BasicBand && b.rate === constants.SavingsBasicRate
+    );
     expect(basicRateBand).toBeDefined();
     expect(basicRateBand?.amount).toBe(5000 - constants.SavingsAllowanceBasic);
-    expect(basicRateBand?.tax).toBeCloseTo((5000 - constants.SavingsAllowanceBasic) * constants.BasicRate);
+    expect(basicRateBand?.tax).toBeCloseTo(
+      (5000 - constants.SavingsAllowanceBasic) * constants.SavingsBasicRate
+    );
 
     const totalSavingsTax = result.reduce((sum, b) => sum + b.tax, 0);
-    expect(totalSavingsTax).toBeCloseTo((5000 - constants.SavingsAllowanceBasic) * constants.BasicRate);
+    expect(totalSavingsTax).toBeCloseTo(
+      (5000 - constants.SavingsAllowanceBasic) * constants.SavingsBasicRate
+    );
   });
 
   it('should apply savings allowance when savings push into higher rate', () => {
@@ -80,20 +86,27 @@ describe('SavingsTaxService', () => {
     expect(savingsZero).toBeDefined();
     expect(savingsZero?.amount).toBe(constants.SavingsAllowanceHigher);
 
-    const savingsBasic = result.find(b => b.band === constants.BasicBand && b.rate === constants.BasicRate);
+    const savingsBasic = result.find(
+      b => b.band === constants.BasicBand && b.rate === constants.SavingsBasicRate
+    );
     expect(savingsBasic).toBeDefined();
     expect(savingsBasic?.amount).toBe(brbRemainingForSavings - constants.SavingsAllowanceHigher);
-    expect(savingsBasic?.tax).toBeCloseTo((brbRemainingForSavings - constants.SavingsAllowanceHigher) * constants.BasicRate);
+    expect(savingsBasic?.tax).toBeCloseTo(
+      (brbRemainingForSavings - constants.SavingsAllowanceHigher) * constants.SavingsBasicRate
+    );
 
-    const savingsHigher = result.find(b => b.band === constants.HigherBand && b.rate === constants.HigherRate);
+    const savingsHigher = result.find(
+      b => b.band === constants.HigherBand && b.rate === constants.SavingsHigherRate
+    );
     expect(savingsHigher).toBeDefined();
     const expectedHigher = untaxedInterest - brbRemainingForSavings;
     expect(savingsHigher?.amount).toBe(expectedHigher);
-    expect(savingsHigher?.tax).toBeCloseTo(expectedHigher * constants.HigherRate);
+    expect(savingsHigher?.tax).toBeCloseTo(expectedHigher * constants.SavingsHigherRate);
 
     const totalSavingsTax = result.reduce((sum, b) => sum + b.tax, 0);
     expect(totalSavingsTax).toBeCloseTo(
-      (brbRemainingForSavings - constants.SavingsAllowanceHigher) * constants.BasicRate + expectedHigher * constants.HigherRate
+      (brbRemainingForSavings - constants.SavingsAllowanceHigher) * constants.SavingsBasicRate +
+        expectedHigher * constants.SavingsHigherRate
     );
   });
 });

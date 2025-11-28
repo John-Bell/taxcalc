@@ -68,13 +68,19 @@ describe('GeneralTaxService (Savings Tax Scenarios)', () => {
     expect(allowanceBand?.amount).toBe(constants.SavingsAllowanceHigher);
     expect(allowanceBand?.tax).toBe(0);
 
-    const higherRateBand = result.find(b => b.band === constants.HigherBand && b.rate === constants.HigherRate);
+    const higherRateBand = result.find(
+      b => b.band === constants.HigherBand && b.rate === constants.SavingsHigherRate
+    );
     expect(higherRateBand).toBeDefined();
     expect(higherRateBand?.amount).toBe(2000 - constants.SavingsAllowanceHigher);
-    expect(higherRateBand?.tax).toBeCloseTo((2000 - constants.SavingsAllowanceHigher) * constants.HigherRate);
+    expect(higherRateBand?.tax).toBeCloseTo(
+      (2000 - constants.SavingsAllowanceHigher) * constants.SavingsHigherRate
+    );
 
     const totalSavingsTax = result.reduce((sum, b) => sum + b.tax, 0);
-    expect(totalSavingsTax).toBeCloseTo((2000 - constants.SavingsAllowanceHigher) * constants.HigherRate);
+    expect(totalSavingsTax).toBeCloseTo(
+      (2000 - constants.SavingsAllowanceHigher) * constants.SavingsHigherRate
+    );
   });
 
   it('returns no bands and zero tax when there is no savings income', () => {
@@ -144,7 +150,7 @@ describe('GeneralTaxService (Savings Tax Scenarios)', () => {
         band: getTaxConstants(PRIOR_TAX_YEAR).HigherBand,
         type: getTaxConstants(PRIOR_TAX_YEAR).GeneralBandType,
         amount: 0,
-        rate: getTaxConstants(PRIOR_TAX_YEAR).HigherRate,
+        rate: getTaxConstants(PRIOR_TAX_YEAR).SavingsHigherRate,
         tax: 0,
       }
     ];
@@ -173,7 +179,7 @@ describe('GeneralTaxService (Savings Tax Scenarios)', () => {
           band: currentYearConstants.HigherBand,
           type: currentYearConstants.GeneralBandType,
           amount: 0,
-          rate: currentYearConstants.HigherRate,
+          rate: currentYearConstants.SavingsHigherRate,
           tax: 0,
         }
       ],
@@ -198,7 +204,7 @@ describe('GeneralTaxService', () => {
     const basicRateBand = taxBands.find(b => b.band === constants.BasicBand && b.type === constants.GeneralBandType);
     expect(basicRateBand).toBeDefined();
     expect(basicRateBand?.amount).toBe(constants.BasicRateBand);
-    expect(basicRateBand?.tax).toBeCloseTo(constants.BasicRateBand * constants.BasicRate);
+    expect(basicRateBand?.tax).toBeCloseTo(constants.BasicRateBand * constants.RentalBasicRate);
   });
 
   it('calculates higher rate tax correctly', () => {
@@ -211,7 +217,9 @@ describe('GeneralTaxService', () => {
     const higherRateBand = taxBands.find(b => b.band === constants.HigherBand && b.type === constants.GeneralBandType);
     expect(higherRateBand).toBeDefined();
     expect(higherRateBand?.amount).toBe(100000 - constants.BasicRateBand);
-    expect(higherRateBand?.tax).toBeCloseTo((100000 - constants.BasicRateBand) * constants.HigherRate);
+    expect(higherRateBand?.tax).toBeCloseTo(
+      (100000 - constants.BasicRateBand) * constants.RentalHigherRate
+    );
   });
 
   it('calculates additional rate tax correctly', () => {
@@ -224,6 +232,8 @@ describe('GeneralTaxService', () => {
     const additionalRateBand = taxBands.find(b => b.band === constants.AdditionalBand && b.type === constants.GeneralBandType);
     expect(additionalRateBand).toBeDefined();
     expect(additionalRateBand?.amount).toBe(200000 - constants.HigherRateBand);
-    expect(additionalRateBand?.tax).toBeCloseTo((200000 - constants.HigherRateBand) * constants.AdditionalRate);
+    expect(additionalRateBand?.tax).toBeCloseTo(
+      (200000 - constants.HigherRateBand) * constants.RentalAdditionalRate
+    );
   });
 });

@@ -87,9 +87,11 @@ describe('TaxCalculationService', () => {
     expect(result.personalAllowance).toBe(constants.StandardPersonalAllowance);
     expect(result.brbExtended).toBe(constants.BasicRateBand + 60000);
     const generalBands = result.taxByBand.filter(b => b.type === constants.GeneralBandType);
-    const basicRateTax = generalBands.filter(b => b.rate === constants.BasicRate).reduce((sum, b) => sum + b.tax, 0);
+    const basicRateTax = generalBands
+      .filter(b => b.rate === constants.RentalBasicRate)
+      .reduce((sum, b) => sum + b.tax, 0);
     expect(result.totalTax).toBeCloseTo(basicRateTax, 2);
-    expect(generalBands.some(b => b.rate === constants.HigherRate)).toBe(false);
+    expect(generalBands.some(b => b.rate === constants.RentalHigherRate)).toBe(false);
   });
 
   it('calculates tax for a complex scenario (rental, savings, dividends, pension contrib)', () => {
