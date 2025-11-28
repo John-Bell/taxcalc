@@ -1,5 +1,6 @@
 export interface IncomeBreakdown {
   generalIncome: number;
+  rentalIncome: number;
   savingsIncome: number;
   dividendIncome: number;
 }

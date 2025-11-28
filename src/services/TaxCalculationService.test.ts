@@ -20,11 +20,14 @@ describe('TaxCalculationService', () => {
     const result = service.calculateTax(input, CURRENT_TAX_YEAR);
     expect(result.personalAllowance).toBe(constants.StandardPersonalAllowance);
     expect(result.brbExtended).toBe(constants.BasicRateBand);
-    expect(result.incomeBreakdown.generalIncome).toBe(35000);
+    expect(result.incomeBreakdown.generalIncome).toBe(30000);
+    expect(result.incomeBreakdown.rentalIncome).toBe(5000);
     expect(result.incomeBreakdown.savingsIncome).toBe(1000);
     expect(result.incomeBreakdown.dividendIncome).toBe(500);
     const generalTax = result.taxByBand.filter(b => b.type === constants.GeneralBandType).reduce((sum, b) => sum + b.tax, 0);
-    expect(generalTax).toBeCloseTo(4486, 0);
+    expect(generalTax).toBeCloseTo(3486, 0);
+    const rentalTax = result.taxByBand.filter(b => b.type === constants.RentalBandType).reduce((sum, b) => sum + b.tax, 0);
+    expect(rentalTax).toBeCloseTo(1000, 0);
     const savingsTax = result.taxByBand.filter(b => b.type === constants.SavingsBandType).reduce((sum, b) => sum + b.tax, 0);
     expect(savingsTax).toBe(0);
     const dividendTax = result.taxByBand.filter(b => b.type === constants.DividendsBandType).reduce((sum, b) => sum + b.tax, 0);
@@ -62,6 +65,7 @@ describe('TaxCalculationService', () => {
     expect(result.personalAllowance).toBe(0);
     expect(result.brbExtended).toBe(constants.BasicRateBand);
     expect(result.incomeBreakdown.generalIncome).toBe(150000);
+    expect(result.incomeBreakdown.rentalIncome).toBe(0);
     expect(result.incomeBreakdown.savingsIncome).toBe(5000);
     expect(result.incomeBreakdown.dividendIncome).toBe(10000);
     const generalTax = result.taxByBand.filter(b => b.type === constants.GeneralBandType).reduce((sum, b) => sum + b.tax, 0);
@@ -104,16 +108,42 @@ describe('TaxCalculationService', () => {
       directPensionContrib: 5000,
     };
     const result = service.calculateTax(input, CURRENT_TAX_YEAR);
-    expect(result.incomeBreakdown.generalIncome).toBe(25000);
+    expect(result.incomeBreakdown.generalIncome).toBe(0);
+    expect(result.incomeBreakdown.rentalIncome).toBe(25000);
     expect(result.incomeBreakdown.savingsIncome).toBe(2000);
     expect(result.incomeBreakdown.dividendIncome).toBe(20000);
     expect(result.brbExtended).toBe(constants.BasicRateBand + 5000);
-    const generalTax = result.taxByBand.filter(b => b.type === constants.GeneralBandType).reduce((sum, b) => sum + b.tax, 0);
-    expect(generalTax).toBeGreaterThan(0);
+    const rentalTax = result.taxByBand.filter(b => b.type === constants.RentalBandType).reduce((sum, b) => sum + b.tax, 0);
+    expect(rentalTax).toBeGreaterThan(0);
     const savingsTax = result.taxByBand.filter(b => b.type === constants.SavingsBandType).reduce((sum, b) => sum + b.tax, 0);
     expect(savingsTax).toBeGreaterThan(0);
     const dividendTax = result.taxByBand.filter(b => b.type === constants.DividendsBandType).reduce((sum, b) => sum + b.tax, 0);
     expect(dividendTax).toBeGreaterThan(0);
+  });
+
+  it('allocates bands to rental income before savings', () => {
+    const constants = getTaxConstants(CURRENT_TAX_YEAR);
+    const service = new TaxCalculationService(CURRENT_TAX_YEAR);
+    const input: TaxCalculationInput = {
+      salary: 20000,
+      rentalIncome: 20000,
+      pensionIncome: 0,
+      untaxedInterest: 15000,
+      dividends: 0,
+      directPensionContrib: 0,
+    };
+
+    const result = service.calculateTax(input, CURRENT_TAX_YEAR);
+
+    const rentalBands = result.taxByBand.filter(b => b.type === constants.RentalBandType);
+    const savingsBands = result.taxByBand.filter(b => b.type === constants.SavingsBandType);
+
+    const rentalBasic = rentalBands.find(b => b.band === constants.BasicBand);
+    expect(rentalBasic?.amount).toBeGreaterThan(0);
+
+    const savingsHigher = savingsBands.find(b => b.band === constants.HigherBand && b.rate === constants.HigherRate);
+    expect(savingsHigher).toBeDefined();
+    expect(savingsHigher?.amount).toBeCloseTo(4730, 0);
   });
 
   it('uses the supplied tax year when calculating tax', () => {
