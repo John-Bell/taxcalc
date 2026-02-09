@@ -1,7 +1,6 @@
+// @vitest-environment node
 const { execSync } = require('child_process');
 const { existsSync } = require('fs');
-
-jest.setTimeout(600000);
 
 test('build produces service worker', () => {
     try {
@@ -11,4 +10,4 @@ test('build produces service worker', () => {
         return;
     }
     expect(existsSync('dist/sw.js')).toBe(true);
-});
+}, 600000);
