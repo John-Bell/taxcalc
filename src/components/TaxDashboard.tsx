@@ -9,6 +9,7 @@ export const TaxDashboard = () => {
     const [pensionIncome, setPensionIncome] = useState(0);
     const [pensionContribution, setPensionContribution] = useState(0);
     const [dividends, setDividends] = useState(0);
+    const [untaxedInterest, setUntaxedInterest] = useState(0);
 
     // State for calculation result
     const [result, setResult] = useState<TaxCalculationResult | null>(null);
@@ -24,16 +25,16 @@ export const TaxDashboard = () => {
             pensionIncome,
             pensionContribution,
             dividends,
-            untaxedInterest: 0, // Default to 0 as it's not in the dashboard inputs yet
+            untaxedInterest,
             directPensionContrib: pensionContribution, // Mapping dashboard input to service input
             otherIncome: 0
         };
         const calculationResult = service.calculateTax(input, taxYear);
         setResult(calculationResult);
-    }, [salary, rentalIncome, pensionIncome, dividends, pensionContribution]);
+    }, [salary, rentalIncome, pensionIncome, dividends, pensionContribution, untaxedInterest]);
 
     const totalIncome = result ?
-        (salary + rentalIncome + pensionIncome + dividends) : 0;
+        (salary + rentalIncome + pensionIncome + dividends + untaxedInterest) : 0;
     // Note: result.incomeBreakdown doesn't have a 'total' field directly, 
     // but we can calculate it or use the utility from models if we imported it.
     // For now, simple sum is fine as it matches inputs.
@@ -137,6 +138,16 @@ export const TaxDashboard = () => {
                         iconBg="bg-purple-100"
                         value={dividends}
                         onChange={setDividends}
+                    />
+
+                    {/* Untaxed Interest */}
+                    <InputCard
+                        label="Untaxed Interest"
+                        icon="account_balance"
+                        iconColor="text-teal-600"
+                        iconBg="bg-teal-100"
+                        value={untaxedInterest}
+                        onChange={setUntaxedInterest}
                     />
                 </div>
             </div>
